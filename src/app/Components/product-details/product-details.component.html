@@ -1,0 +1,45 @@
+<p *ngIf="found" class="text-center">
+	<app-not-found></app-not-found>
+</p>
+
+<section *ngIf="!found" class="mt-4">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card m-5">
+					<img [src]="product.imgURL" alt="" class="card-img">
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="ps-lg-10 mt-6 mt-md-0">
+					<h1 class="mb-2 mt-5">{{product.name}}</h1>
+					<p class="fs-4 fw-bold text-dark">{{product.price | currency}}</p>
+					<button type="button" class="btn btn-primary">Add to cart</button>
+					<table class="table table-borderless mb-0 card p-2 mt-4">
+						<tbody>
+							<tr>
+								<td>Product ID:</td>
+								<td><span
+										class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill">{{product.id}}</span>
+								</td>
+							</tr>
+							<tr>
+								<td>In Stock:</td>
+								<td><span
+										class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill">{{product.quantity}}</span>
+								</td>
+							</tr>
+							<tr>
+								<td>Category:</td>
+								<td><span
+										class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill">{{category}}</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
