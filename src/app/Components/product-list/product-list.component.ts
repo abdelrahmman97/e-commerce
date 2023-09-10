@@ -1,34 +1,64 @@
-import { Component } from '@angular/core';
-import { ICategory } from 'src/app/Models/ICategory';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { IProduct } from 'src/app/Models/IProduct';
-import { CategoryService } from 'src/app/services/category.service';
-import { ProductService } from 'src/app/services/product.service';
 
-@Component({
+
+interface IProductsResponseObj {
+	products: IProduct[];
+	total: number;
+	skip: number;
+	limit: number;
+}
+
+
+@Component( {
 	selector: 'app-product-list',
 	templateUrl: './product-list.component.html',
 	styleUrls: ['./product-list.component.css'],
-})
-export class ProductListComponent {
-	Products: IProduct[] = [];
-	Categories: ICategory[] = [];
-	selected: number = 0;
-	selectedName: string = '';
+} )
+export class ProductListComponent implements OnInit {
+	ProductsResponseObj: IProductsResponseObj | undefined;
+	Products!: IProduct[];
+	Categories: string[] = [];
+	selected: any = '';
 
-	constructor(private prodServ: ProductService, private catService: CategoryService) {
-		this.Products = this.prodServ.getAllProducts();
-		this.Categories = this.catService.getAllCategories();
-		this.selected = this.Categories[0].id;
-		this.selectedName = this.Categories[0].name;
+	constructor( private httpClient: HttpClient ) { }
+
+	ngOnInit() {
+		this.httpClient.get( 'https://dummyjson.com/products/categories' ).subscribe( {
+			next: data => {
+				this.Categories = data as string[];
+				this.Categories.unshift( "all" );
+				console.log( this.Categories );
+				this.selected = this.Categories[0];
+			}
+		} );
+		this.httpClient.get( 'https://dummyjson.com/products?limit=12' ).subscribe( {
+			next: data => {
+				this.ProductsResponseObj = data as IProductsResponseObj;
+				this.Products = this.ProductsResponseObj.products;
+				console.log( "🚀 ~ Products:", this.Products )
+			}
+		} );
 	}
 
-
 	onSelectChange() {
-		this.selectedName = this.Categories[this.selected].name;
-		if (this.selected == 0) {
-			this.Products = this.prodServ.getAllProducts();
+		this.selected = this.Categories.filter( s => s === this.selected )[0];
+
+		if ( this.selected == 'all' ) {
+			this.httpClient.get( `https://dummyjson.com/products?limit=12` ).subscribe( {
+				next: data => {
+					this.ProductsResponseObj = data as IProductsResponseObj;
+					this.Products = this.ProductsResponseObj.products;
+				}
+			} );
 			return;
 		}
-		this.Products = this.prodServ.getProductsByCategoryId(this.selected);
+		this.httpClient.get( `https://dummyjson.com/products/category/${this.selected}?limit=12` ).subscribe( {
+			next: data => {
+				this.ProductsResponseObj = data as IProductsResponseObj;
+				this.Products = this.ProductsResponseObj.products;
+			}
+		} );
 	}
 }

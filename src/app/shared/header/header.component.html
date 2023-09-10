@@ -12,6 +12,16 @@
 					<a routerLinkActive="text-bg-dark" [routerLink]="['products']"
 						class="btn px-2 btn-light">Products</a>
 				</li>
+				<li>
+					<a routerLinkActive="text-bg-dark" [routerLink]="['cart']"
+						class="btn px-2 btn-light position-relative">
+						Cart
+						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+							{{totalItemsInCart}}
+							<span class="visually-hidden">items in cart</span>
+						</span>
+					</a>
+				</li>
 			</ul>
 
 			<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
@@ -25,7 +35,7 @@
 					</a>
 				</li>
 				<li class="mx-1">
-					<a [routerLink]="['regitser']" class="btn btn-primary">
+					<a [routerLink]="['register']" class="btn btn-primary">
 						Register
 					</a>
 				</li>

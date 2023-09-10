@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { IProduct } from '../Models/IProduct';
-import { Data } from '../Models/db';
 
 @Injectable()
 export class ProductService {
-	private products: IProduct[] = Data.Products;
+	private products!: IProduct[];
 	private product!: IProduct;
 
 	getAllProducts() {
@@ -12,7 +11,7 @@ export class ProductService {
 	}
 
 	getProductsByCategoryId(id: number) {
-		return this.products.filter(item => item.categoryID == id);
+		// return this.products.filter(item => item.categoryID == id);
 	}
 
 	getProduct(id: number): any {

@@ -1,35 +1,44 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IProduct } from 'src/app/Models/IProduct';
-import { CategoryService } from 'src/app/services/category.service';
-import { ProductService } from 'src/app/services/product.service';
+import { CartService } from 'src/app/services/Cart.service';
 
-@Component({
+@Component( {
 	selector: 'app-product-details',
 	templateUrl: './product-details.component.html',
 	styleUrls: ['./product-details.component.css']
-})
-export class ProductDetailsComponent {
+} )
+export class ProductDetailsComponent implements OnInit {
 	id!: number;
-	product!: any;
+	product!: IProduct;
 	found: boolean = false;
 	category: string = "";
 
-	constructor(private ActiveRoute: ActivatedRoute, private prodserv: ProductService, private catserv: CategoryService) {
-		this.ActiveRoute.params.subscribe({
-			next: (prams) => {
-				this.id = prams['id'];
-			}
-		})
+	constructor( private ActiveRoute: ActivatedRoute, private httpClient: HttpClient, private route: Router, private cartService: CartService ) { }
 
-		this.product = this.prodserv.getProduct(this.id);
-		if (!this.product) {
-			this.found = true;
-		}
-		else {
-			this.category = this.catserv.getCategory(this.product.id);
-		}
+	ngOnInit(): void {
+		this.ActiveRoute.params.subscribe( {
+			next: ( prams ) => {
+				this.id = prams['id'];
+
+				this.httpClient.get( `https://dummyjson.com/products/${this.id}` ).subscribe( {
+					next: data => {
+						this.found = true;
+						this.product = data as IProduct;
+					},
+					error: error => {
+						if ( !this.product ) {
+							this.route.navigateByUrl( "/404" )
+						}
+					}
+				} )
+			}
+		} );
 	}
 
+	addToCart() {
+		this.cartService.addToCart( this.product );
+	}
 
 }
